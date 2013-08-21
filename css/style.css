@@ -1,0 +1,38 @@
+body {
+  padding-top: 70px;
+}
+  
+
+.table-property-list th {
+  width: 25%;
+}
+
+
+.table-property-list tr:first-child * {
+  border-top: 0;
+}
+
+
+.well-sidebar {
+  padding: 8px 0px;
+}
+
+
+input[disabled] {
+  background-color: inherit;
+  border: 1px solid transparent;
+  cursor: text;
+  box-shadow: 0 0;
+}
+
+
+alert-narrow {
+  padding: 6px 12px;
+}
+
+
+.modal-inline {
+  position: relative;
+  left: auto;
+  margin-left: 5px
+}
