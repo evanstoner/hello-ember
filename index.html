@@ -8,14 +8,14 @@
     <link href="css/style.css" rel="stylesheet"
   </head>
   <body>
-    <script type="text/x-handlebars">
+    <script type="text/x-handlebars" id="application">
       <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">
           <div class="container">
             <a href="#" class="brand">Hello, Ember!</a>
             <ul class="nav">
               {{#view App.NavView}}
-                {{#linkTo servers.manage}}Servers{{/linkTo}}
+                {{#linkTo servers}}Servers{{/linkTo}}
               {{/view}}
             </ul>
           </div>
@@ -40,8 +40,8 @@
         <div class="span3">
           <div class="well well-sidebar">
             <ul class="nav nav-list">
-              {{#linkTo "servers.manage" tagName="li"}}
-                {{#linkTo servers.manage}}Manage all <i class="icon-list pull-right"></i>{{/linkTo}}
+              {{#linkTo "servers.index" tagName="li"}}
+                {{#linkTo servers.index}}Manage all <i class="icon-list pull-right"></i>{{/linkTo}}
               {{/linkTo}}
               {{#linkTo "servers.new" tagName="li"}}
                 {{#linkTo servers.new}}Create new <i class="icon-asterisk pull-right"></i>{{/linkTo}}
@@ -61,12 +61,6 @@
               {{/each}}
             </ul>
           </div>
-          {{#if multiEditCount}}
-            <div class="alert alert-narrow">
-              <strong>Multi-edit</strong>
-              There are {{multiEditCount}} changed records (<i class="icon-edit"></i>). Clicking "Save" will commit them all.
-            </div>
-          {{/if}}
         </div>
         
         <div class="span9">
@@ -75,18 +69,20 @@
       </div>
     </script>
     
-    <script type="text/x-handlebars" id="servers/manage">
+    <script type="text/x-handlebars" id="servers/index">
       {{#if selectedCount}}
         <div class="btn-group">
-          <button class="btn" {{action "delete"}}><i class="icon-trash"></i> Delete</button>
+          {{#linkTo "servers.delete" classNames="btn"}}<i class="icon-trash"></i> Delete {{selectedCount}}{{/linkTo}}
         </div>
       {{else}}
-        // buttons for no-selected state
+        <div class="btn-group btn-group-empty">
+          
+        </div>
       {{/if}}
       <table class="table">
         <thead>
           <tr>
-            <th></th>
+            <th>{{view Ember.Checkbox checkedBinding="allSelected"}}</th>
             <th>Name</th>
             <th>IP</th>
             <th>Hostname</th>
@@ -133,6 +129,26 @@
         </div>
       </form>
     </script>
+        
+    <script type="text/x-handlebars" id="servers/delete">
+      <div class="modal modal-inline">
+        <div class="modal-header">
+          <h3>Delete servers</h3>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete the following servers?</p>
+          <ul>
+            {{#each selected}}
+              <li>{{name}}</li>
+            {{/each}}
+          </ul>
+        </div>
+        <div class="modal-footer">
+          {{#linkTo "servers.index" classNames="btn"}}Cancel{{/linkTo}}
+          <button class="btn btn-danger" {{action delete}}>Delete</button>
+        </div>
+      </div>
+    </script>
     
     <script type="text/x-handlebars" id="server">
       <ul class="nav nav-tabs">
@@ -142,76 +158,84 @@
       </ul>
       
       {{outlet}}
+      
+      <code><small>ID: {{id}}</small></code>
     </script>
     
     <script type="text/x-handlebars" id="server/index">
-      <form class="form-horizontal">
-        <div class="control-group">
-          <label for="name" class="control-label">Name</label>
-          <div class="controls">
-            {{view Em.TextField valueBinding="name" disabled=true}}
+      {{#with controllers.server}}
+        <form class="form-horizontal">
+          <div class="control-group">
+            <label class="control-label">Name</label>
+            <div class="controls">
+              {{view Em.TextField valueBinding="name" disabled=true}}
+            </div>
           </div>
-        </div>
-        <div class="control-group">
-          <label for="ip" class="control-label">IP</label>
-          <div class="controls">
-            {{view Em.TextField valueBinding="ip" disabled=true}}
+          <div class="control-group">
+            <label class="control-label">IP</label>
+            <div class="controls">
+              {{view Em.TextField valueBinding="ip" disabled=true}}
+            </div>
           </div>
-        </div>
-        <div class="control-group">
-          <label for="hostname" class="control-label">Hostname</label>
-          <div class="controls">
-            {{view Em.TextField valueBinding="hostname" disabled=true}}
+          <div class="control-group">
+            <label class="control-label">Hostname</label>
+            <div class="controls">
+              {{view Em.TextField valueBinding="hostname" disabled=true}}
+            </div>
           </div>
-        </div>
-        <div class="form-actions">
-          {{#linkTo "server.edit" this classNames="btn"}}<i class="icon-pencil"></i> Edit{{/linkTo}}
-          {{#linkTo "server.delete" this classNames="btn"}}<i class="icon-trash"></i> Delete{{/linkTo}}
-        </div>
-      </form>
+          <div class="form-actions">
+            {{#linkTo "server.edit" this classNames="btn"}}<i class="icon-pencil"></i> Edit{{/linkTo}}
+            {{#linkTo "server.delete" this classNames="btn"}}<i class="icon-trash"></i> Delete{{/linkTo}}
+          </div>
+        </form>
+      {{/with}}
     </script>
       
     <script type="text/x-handlebars" id="server/edit">
-      <form class="form-horizontal">
-        <div class="control-group">
-          <label for="name" class="control-label">Name</label>
-          <div class="controls">
-            {{view Em.TextField valueBinding="name"}}
+      {{#with controllers.server}}
+        <form class="form-horizontal">
+          <div class="control-group">
+            <label class="control-label">Name</label>
+            <div class="controls">
+              {{view Em.TextField valueBinding="name"}}
+            </div>
           </div>
-        </div>
-        <div class="control-group">
-          <label for="ip" class="control-label">IP</label>
-          <div class="controls">
-            {{view Em.TextField valueBinding="ip"}}
+          <div class="control-group">
+            <label class="control-label">IP</label>
+            <div class="controls">
+              {{view Em.TextField valueBinding="ip"}}
+            </div>
           </div>
-        </div>
-        <div class="control-group">
-          <label for="hostname" class="control-label">Hostname</label>
-          <div class="controls">
-            {{view Em.TextField valueBinding="hostname"}}
+          <div class="control-group">
+            <label class="control-label">Hostname</label>
+            <div class="controls">
+              {{view Em.TextField valueBinding="hostname"}}
+            </div>
           </div>
-        </div>
-        <div class="form-actions">
-          {{#linkTo "server.index" this classNames="btn"}}Cancel{{/linkTo}}
-          <button class="btn btn-success" {{action "save"}}> Save</button>
-        </div>
-      </form>
+          <div class="form-actions">
+            {{#linkTo "server.index" this classNames="btn"}}Cancel{{/linkTo}}
+            <button class="btn btn-success" {{action "save"}}> Save</button>
+          </div>
+        </form>
+      {{/with}}
     </script>
       
     <script type="text/x-handlebars" id="server/delete">
-      <div class="modal modal-inline">
-        <div class="modal-header">
-          <h3>Delete server</h3>
+      {{#with controllers.server}}
+        <div class="modal modal-inline">
+          <div class="modal-header">
+            <h3>Delete server</h3>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete <b>{{name}}</b>? Its IP address is <b>{{ip}}</b>
+            and its hostname is <b>{{hostname}}</b>.</p>
+          </div>
+          <div class="modal-footer">
+            {{#linkTo server.index this classNames="btn"}}Cancel{{/linkTo}}
+            <button class="btn btn-danger" {{action delete}}>Delete</button>
+          </div>
         </div>
-        <div class="modal-body">
-          <p>Are you sure you want to delete <strong>{{name}}</strong>? Its IP address is <strong>{{ip}}</strong>
-          and its hostname is <strong>{{hostname}}</strong>.</p>
-        </div>
-        <div class="modal-footer">
-          {{#linkTo server.index this classNames="btn"}}Cancel{{/linkTo}}
-          <button class="btn btn-danger" {{action delete}}>Delete</button>
-        </div>
-      </div>
+      {{/with}}
     </script>
       
 

@@ -36,3 +36,8 @@ alert-narrow {
   left: auto;
   margin-left: 5px
 }
+
+
+.btn-group-empty {
+  height: 30px;
+}

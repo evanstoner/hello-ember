@@ -1,20 +1,26 @@
 App.ServersController = Em.ArrayController.extend({
-  multiEditCount: function() {
-    var dirty = this.filterProperty("isDirty");
-    var dirtyCount = dirty.get("length");
-    if (dirtyCount > 1) {
-      return dirtyCount;
-    } else {
-      return 0;
-    }
-  }.property("@each.isDirty")
+
 });
 
 
-App.ServersManageController = Em.ArrayController.extend({
+App.ServersIndexController = Em.ArrayController.extend({
   selectedCount: function() {
     var selected = this.filterProperty("isSelected");
-    return selected.get("length");
+    if (selected.get("length") === this.get("length")) {
+      return "all";
+    } else {
+      return selected.get("length");
+    }
+  }.property("@each.isSelected"),
+  
+  allSelected: function(key, value) {
+    if (arguments.length === 1) {
+      // getter
+      return this.everyProperty("isSelected");
+    } else {
+      // setter
+      this.setEach("isSelected", value);
+    }
   }.property("@each.isSelected")
 });
 
@@ -34,7 +40,7 @@ App.ServersNewController = Em.Controller.extend({
     
     this.get("store").commit();
     this.clear();
-    this.transitionToRoute("servers.manage");
+    this.transitionToRoute("servers");
   },
   
   clear: function() {
@@ -45,13 +51,23 @@ App.ServersNewController = Em.Controller.extend({
 });
 
 
+App.ServersDeleteController = Em.Controller.extend({
+  needs: ["servers"],
+  
+  selected: function() {
+    return this.get("controllers.servers").filterProperty("isSelected");
+  }.property("controllers.servers.@each.isSelected")
+});
+
+
 App.ServerIndexController = Em.ObjectController.extend({
-  // an empty controlle is required in order to use this.controllerFor("serverIndex") in
-  // ServerRoute.setupController()
+  needs: ["server"]
 });
 
 
 App.ServerEditController = Em.ObjectController.extend({
+  needs: ["server"],
+  
   save: function() {
     var model = this.get("model");
     model.get("store").commit();
@@ -63,10 +79,12 @@ App.ServerEditController = Em.ObjectController.extend({
 
 
 App.ServerDeleteController = Em.ObjectController.extend({
+  needs: ["server"],
+  
   delete: function() {
     var model = this.get("model");
     model.deleteRecord();
     model.get("store").commit();
-    this.transitionToRoute("servers.manage");
+    this.transitionToRoute("servers");
   }
 });
