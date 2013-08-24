@@ -1,6 +1,7 @@
 App.Router.map(function() {
   this.resource("servers", function() {
     this.route("new");
+    this.route("edit");
     this.route("delete");
     this.resource("server", {path: "/:server_id"}, function() {
       this.route("edit");
@@ -8,9 +9,6 @@ App.Router.map(function() {
     });
   });
 });
-  
-  
-App.FailureRoute = Em.Route.extend({});
   
 
 App.ServersRoute = Em.Route.extend({
@@ -27,10 +25,16 @@ App.ServersIndexRoute = Em.Route.extend({
 });
 
 
-App.ServersDeleteRoute = Em.Route.extend({
-//  model: function() {
-//    return App.Server.find({isSelected: true});
-//  }
+App.ServersEditRoute = Em.Route.extend({
+  deactivate: function() {
+    // rollback transactions when the user navigates away, if the transactions aren't being saved
+    var model = this.modelFor("servers").get("firstObject"); // "servers" refers to ServersRoute
+    if (!model.get("isSaving")) {
+      // changes are stored in the default transaction, so all changes are rolled back, not just the
+      // changes for the firstObject
+      model.get("transaction").rollback();
+    }    
+  }
 });
 
 
@@ -41,11 +45,10 @@ App.ServerRoute = Em.Route.extend({
 
 App.ServerEditRoute = Em.Route.extend({
   deactivate: function() {
-    // rollback transactions when the user navigates away; this is ok even if we navigate away after
-    // committing some changes, since there will just be no transaction to rollback
-    var model = this.modelFor("server"); // server refers to ServerRoute
+    // rollback transactions when the user navigates away, if the transactions aren't being saved
+    var model = this.modelFor("server"); // "server" refers to ServerRoute
     if (!model.get("isSaving")) {
       model.get("transaction").rollback();
     }
   }
-})
+});

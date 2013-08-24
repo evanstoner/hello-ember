@@ -76,6 +76,7 @@
     <script type="text/x-handlebars" id="servers/index">
       {{#if selectedCount}}
         <div class="btn-group">
+          {{#linkTo "servers.edit" classNames="btn"}}<i class="icon-pencil"></i> Edit {{selectedCount}}{{/linkTo}}
           {{#linkTo "servers.delete" classNames="btn"}}<i class="icon-trash"></i> Delete {{selectedCount}}{{/linkTo}}
         </div>
       {{else}}
@@ -119,10 +120,37 @@
           {{view Em.TextField valueBinding="hostname"}}
         {{/view}}
         <div class="form-actions">
-          <button class="btn btn-success" {{action "create"}}><i class="icon-ok icon-white"></i> Create</button>
+          <button class="btn btn-success" {{action "create"}}>Create</button>
           <button class="btn" {{action "clear"}}>Clear</button>
         </div>
       </form>
+    </script>
+        
+    <script type="text/x-handlebars" id="servers/edit">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>IP</th>
+            <th>Hostname</th>
+          </tr>
+        </thead>
+        <tbody>
+           {{#each selected}}
+            <tr>
+              <td>{{view Em.TextField valueBinding="name"}}</td>
+              <td>{{view Em.TextField valueBinding="ip"}}</td>
+              <td>{{view Em.TextField valueBinding="hostname"}}</td>
+            </tr>
+          {{else}}
+            <tr><td colspan="3" style="text-align: center"><span class="muted">No servers</span></td></tr>
+          {{/each}}
+        </tbody>
+      </table>
+      <div class="form-actions">
+        <button class="btn btn-success" {{action "save"}}>Save</button>
+        {{#linkTo "servers.index" classNames="btn"}}Cancel{{/linkTo}}
+      </div>
     </script>
         
     <script type="text/x-handlebars" id="servers/delete">

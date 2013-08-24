@@ -25,12 +25,10 @@ App.SelectableArrayController = Em.ArrayController.extend({
 
 
 App.ServersController = Em.ArrayController.extend({
-
 });
 
 
 App.ServersIndexController = App.SelectableArrayController.extend({
-
 });
 
 
@@ -60,6 +58,21 @@ App.ServersNewController = Em.Controller.extend({
 });
 
 
+App.ServersEditController = Em.Controller.extend({
+  needs: ["servers"],
+  
+  selected: function() {
+    return this.get("controllers.servers").filterProperty("isSelected");
+  }.property("controllers.servers.@each.isSelected"),
+  
+  save: function() {
+    var model = this.get("controllers.servers.firstObject");
+    model.get("store").commit();
+    this.transitionToRoute("servers");
+  }
+});
+
+
 App.ServersDeleteController = Em.Controller.extend({
   needs: ["servers"],
   
@@ -78,9 +91,9 @@ App.ServerEditController = Em.ObjectController.extend({
   needs: ["server"],
   
   save: function() {
-    var server = this.get("controllers.server.model");
-    server.get("store").commit();
-    this.transitionToRoute("server", server);
+    var model = this.get("controllers.server.model");
+    model.get("store").commit();
+    this.transitionToRoute("server", model);
   }
   
   // reverts are handled by ServerEditRoute.deactivate
@@ -91,9 +104,9 @@ App.ServerDeleteController = Em.ObjectController.extend({
   needs: ["server"],
   
   delete: function() {
-    var server = this.get("controllers.server.model");
-    server.deleteRecord();
-    server.get("store").commit();
+    var model = this.get("controllers.server.model");
+    model.deleteRecord();
+    model.get("store").commit();
     this.transitionToRoute("servers");
   }
 });
