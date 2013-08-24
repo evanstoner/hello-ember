@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
     <link href="css/style.css" rel="stylesheet"
   </head>
   <body>
@@ -148,8 +149,8 @@
         </tbody>
       </table>
       <div class="form-actions">
-        <button class="btn btn-success" {{action "save"}}>Save</button>
         {{#linkTo "servers.index" classNames="btn"}}Cancel{{/linkTo}}
+        <button class="btn btn-success" {{action "save"}}>Save</button>
       </div>
     </script>
         
