@@ -1,12 +1,11 @@
-App.ServersController = Em.ArrayController.extend({
-
-});
-
-
-App.ServersIndexController = Em.ArrayController.extend({
+App.SelectableArrayController = Em.ArrayController.extend({
+  selected: function() {
+    return this.filterProperty("isSelected");
+  }.property("@each.isSelected"),
+  
   selectedCount: function() {
-    var selected = this.filterProperty("isSelected");
-    if (selected.get("length") === this.get("length")) {
+    var selected = this.get("selected");
+    if (selected.get("length") === this.get("length") && this.get("length") !== 0) {
       return "all";
     } else {
       return selected.get("length");
@@ -22,6 +21,16 @@ App.ServersIndexController = Em.ArrayController.extend({
       this.setEach("isSelected", value);
     }
   }.property("@each.isSelected")
+});
+
+
+App.ServersController = Em.ArrayController.extend({
+
+});
+
+
+App.ServersIndexController = App.SelectableArrayController.extend({
+
 });
 
 
@@ -69,9 +78,9 @@ App.ServerEditController = Em.ObjectController.extend({
   needs: ["server"],
   
   save: function() {
-    var model = this.get("model");
-    model.get("store").commit();
-    this.transitionToRoute("server", model);
+    var server = this.get("controllers.server.model");
+    server.get("store").commit();
+    this.transitionToRoute("server", server);
   }
   
   // reverts are handled by ServerEditRoute.deactivate
@@ -82,9 +91,9 @@ App.ServerDeleteController = Em.ObjectController.extend({
   needs: ["server"],
   
   delete: function() {
-    var model = this.get("model");
-    model.deleteRecord();
-    model.get("store").commit();
+    var server = this.get("controllers.server.model");
+    server.deleteRecord();
+    server.get("store").commit();
     this.transitionToRoute("servers");
   }
 });

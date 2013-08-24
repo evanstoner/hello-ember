@@ -14,9 +14,9 @@
           <div class="container">
             <a href="#" class="brand">Hello, Ember!</a>
             <ul class="nav">
-              {{#view App.NavView}}
+              {{#linkTo servers tagName="li"}}
                 {{#linkTo servers}}Servers{{/linkTo}}
-              {{/view}}
+              {{/linkTo}}
             </ul>
           </div>
         </div>
@@ -34,6 +34,10 @@
         </div>
       </div>
     </script>
+    
+    
+    <!-- SERVERS -->
+    
     
     <script type="text/x-handlebars" id="servers">
       <div class="row">
@@ -105,24 +109,15 @@
     
     <script type="text/x-handlebars" id="servers/new">
       <form class="form-horizontal">
-        <div class="control-group">
-          <label for="name" class="control-label">Name</label>
-          <div class="controls">
-            {{view Ember.TextField valueBinding="name"}}
-          </div>
-        </div>
-        <div class="control-group">
-          <label for="ip" class="control-label">IP</label>
-          <div class="controls">
-            {{view Ember.TextField valueBinding="ip"}}
-          </div>
-        </div>
-        <div class="control-group">
-          <label for="hostname" class="control-label">Hostname</label>
-          <div class="controls">
-            {{view Ember.TextField valueBinding="hostname"}}
-          </div>
-        </div>
+        {{#view App.ControlGroupView label="Name"}}
+          {{view Em.TextField valueBinding="name"}}
+        {{/view}}
+        {{#view App.ControlGroupView label="IP"}}
+          {{view Em.TextField valueBinding="ip"}}
+        {{/view}}
+        {{#view App.ControlGroupView label="Hostname"}}
+          {{view Em.TextField valueBinding="hostname"}}
+        {{/view}}
         <div class="form-actions">
           <button class="btn btn-success" {{action "create"}}><i class="icon-ok icon-white"></i> Create</button>
           <button class="btn" {{action "clear"}}>Clear</button>
@@ -150,6 +145,10 @@
       </div>
     </script>
     
+    
+    <!-- SERVERS.SERVER -->
+    
+    
     <script type="text/x-handlebars" id="server">
       <ul class="nav nav-tabs">
         {{#linkTo "server.index" this tagName="li"}}
@@ -159,30 +158,21 @@
       
       {{outlet}}
       
-      <code><small>ID: {{id}}</small></code>
+      {{partial "id"}}
     </script>
     
     <script type="text/x-handlebars" id="server/index">
       {{#with controllers.server}}
         <form class="form-horizontal">
-          <div class="control-group">
-            <label class="control-label">Name</label>
-            <div class="controls">
-              {{view Em.TextField valueBinding="name" disabled=true}}
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label">IP</label>
-            <div class="controls">
-              {{view Em.TextField valueBinding="ip" disabled=true}}
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label">Hostname</label>
-            <div class="controls">
-              {{view Em.TextField valueBinding="hostname" disabled=true}}
-            </div>
-          </div>
+          {{#view App.ControlGroupView label="Name"}}
+            {{view Em.TextField valueBinding="name" disabled=true}}
+          {{/view}}
+          {{#view App.ControlGroupView label="IP"}}
+            {{view Em.TextField valueBinding="ip" disabled=true}}
+          {{/view}}
+          {{#view App.ControlGroupView label="Hostname"}}
+            {{view Em.TextField valueBinding="hostname" disabled=true}}
+          {{/view}}
           <div class="form-actions">
             {{#linkTo "server.edit" this classNames="btn"}}<i class="icon-pencil"></i> Edit{{/linkTo}}
             {{#linkTo "server.delete" this classNames="btn"}}<i class="icon-trash"></i> Delete{{/linkTo}}
@@ -194,24 +184,15 @@
     <script type="text/x-handlebars" id="server/edit">
       {{#with controllers.server}}
         <form class="form-horizontal">
-          <div class="control-group">
-            <label class="control-label">Name</label>
-            <div class="controls">
-              {{view Em.TextField valueBinding="name"}}
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label">IP</label>
-            <div class="controls">
-              {{view Em.TextField valueBinding="ip"}}
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label">Hostname</label>
-            <div class="controls">
-              {{view Em.TextField valueBinding="hostname"}}
-            </div>
-          </div>
+          {{#view App.ControlGroupView label="Name"}}
+            {{view Em.TextField valueBinding="name"}}
+          {{/view}}
+          {{#view App.ControlGroupView label="IP"}}
+            {{view Em.TextField valueBinding="ip"}}
+          {{/view}}
+          {{#view App.ControlGroupView label="Hostname"}}
+            {{view Em.TextField valueBinding="hostname"}}
+          {{/view}}
           <div class="form-actions">
             {{#linkTo "server.index" this classNames="btn"}}Cancel{{/linkTo}}
             <button class="btn btn-success" {{action "save"}}> Save</button>
@@ -237,7 +218,33 @@
         </div>
       {{/with}}
     </script>
-      
+    
+    
+    <!-- TEMPLATES -->
+    
+    <!-- usage: 
+      {{partial "id"}} 
+    -->
+    <script type="text/x-handlebars" id="_id">
+      <code><small>ID: {{id}}</small></code>
+    </script>
+    
+    
+    <!-- usage: 
+      {{#view App.ControlGroupView label="Name"}}
+        {{view Em.TextField valueBinding="name" disabled=true}}
+      {{/view}}
+    -->
+    <script type="text/x-handlebars" id="controlGroup">
+      <div class="control-group">
+        <label class="control-label">{{view.label}}</label>
+        <div class="controls">
+          {{yield}}
+        </div>
+      </div>
+    </script>
+    
+    
 
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="js/lib/bootstrap.min.js"></script>
